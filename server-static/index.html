@@ -20,7 +20,9 @@
 
             <br>
 
-            <input class="form-control" placeholder="name">
+            <input id="name" class="form-control" placeholder="name">
+            <br>
+            <textarea id="message" class="form-control" placeholder="Message"></textarea>
             <br>
             <button id="send" class="btn btn-success">Send</button>
 
@@ -47,11 +49,13 @@
             console.log('ready')
             
             $('#send').click( () => {
-                    addMessages({
-                    name: "Carl",
-                    message: "Gustov"
+                    var message = {
+                        name: $("#name").val(),
+                        message: $("#message").val()
+                    }
+                    postMessage(message)
                 })
-            })
+            
 
             getMessages()
         })
@@ -72,6 +76,10 @@
                 // same as above with the call back being replaced with the addMessages function
                 data.forEach(addMessages)
             })
+        }
+
+        function postMessage() {
+            $.post('http://localhost:3000/messages', message)
         }
     
     </script> 
