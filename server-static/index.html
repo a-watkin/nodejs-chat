@@ -49,6 +49,7 @@
             console.log('ready')
             
             $('#send').click( () => {
+                console.log('getting here?')
                     var message = {
                         name: $("#name").val(),
                         message: $("#message").val()
@@ -61,7 +62,7 @@
         })
 
         function addMessages(message) {
-            $("#messages").append(
+            $("#message").append(
                 `<h4> ${message.name} </h4>
                 <p>${message.message}</p>`
             )
@@ -78,7 +79,7 @@
             })
         }
 
-        function postMessage() {
+        function postMessage(message) {
             $.post('http://localhost:3000/messages', message)
         }
     
