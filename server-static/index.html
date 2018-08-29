@@ -22,7 +22,7 @@
 
             <input class="form-control" placeholder="name">
             <br>
-            <button class="btn btn-success">Send</button>
+            <button id="send" class="btn btn-success">Send</button>
 
         </div>
 
@@ -42,7 +42,23 @@
         // document on ready
         $( () => {
             console.log('ready')
+            
+            $('#send').click( () => {
+                    addMessages({
+                    name: "Carl",
+                    message: "Gustov"
+                })
+            })
+
+
         })
+
+        function addMessages(message) {
+            $("#messages").append(
+                `<h4> ${message.name} </h4>
+                <p>${message.message}</p>`
+            )
+        }
     
     </script> 
   </body>
