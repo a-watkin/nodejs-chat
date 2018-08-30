@@ -69,6 +69,11 @@
             getMessages()
         })
 
+        // listens for new messages and passes them to addMessages
+        // which puts them on the page
+        // no paramater is supplied because message is the same as the callback
+        socket.on('message', addMessages)
+
         function addMessages(message) {
             // there was a problem here, it was targetting message instead of messages
             $("#messages").append(

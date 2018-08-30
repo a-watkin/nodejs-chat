@@ -51,6 +51,7 @@ app.post('/messages', (req, res) => {
 
     // recieves message from postman, pushes message onto messages array, which jquery gets on the front end
     messages.push(req.body)
+    io.emit('message', req.body)
     res.sendStatus(200)
 })
 
