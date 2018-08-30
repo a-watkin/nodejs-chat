@@ -41,7 +41,7 @@ app.use(bodyParser.urlencoded({extended: false}))
 
 
 
-var dbUrl = "mongodb://awatkin:fx83gtplus@ds247479.mlab.com:47479/bobbytables"
+var dbUrl = "mongodb://@ds247479.mlab.com:47479/bobbytables"
 
 var messages = [
     {
