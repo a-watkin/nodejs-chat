@@ -1,6 +1,19 @@
 var express = require('express')
 var bodyParser = require('body-parser')
+require('dotenv').config()
+
 var app = express()
+
+
+
+const db = ({
+    user: process.env.DB_USERNAME,
+    password: process.DB_PASSWORD
+})
+
+console.log(db.user)
+
+var mongoose = require('mongoose')
 
 // uses the node.js http server module passing in the express app
 // make sure that it is with an uppercase S
@@ -26,6 +39,9 @@ app.use(bodyParser.urlencoded({extended: false}))
 // i think this is due to nodemon and the port not being released fast enough
 // because it is literally every other save that causes a crash
 
+
+
+var dbUrl = "mongodb://awatkin:fx83gtplus@ds247479.mlab.com:47479/bobbytables"
 
 var messages = [
     {
