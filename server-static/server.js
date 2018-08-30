@@ -2,6 +2,12 @@ var express = require('express')
 var bodyParser = require('body-parser')
 var app = express()
 
+// uses the node.js http server module passing in the express app
+// make sure that it is with an uppercase S
+var http = require('http').Server(app)
+
+var io = require('socket.io')(http)
+
 app.use(express.static(__dirname))
 // app.use(bodyParser.json())
 // var jsonParser = bodyParser.json()
@@ -48,7 +54,12 @@ app.post('/messages', (req, res) => {
     res.sendStatus(200)
 })
 
-var server = app.listen(3000, () => {
+// logs a message anytime a client connects
+io.on('connection', (socket) => {
+    console.log('a user connected')
+})
+
+var server = http.listen(3000, () => {
     console.log('server is listening on port', server.address().port)
 })
 
