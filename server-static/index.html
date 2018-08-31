@@ -25,6 +25,7 @@
             <textarea id="message" class="form-control" placeholder="Message"></textarea>
             <br>
             <button id="send" class="btn btn-success">Send</button>
+            <button id="delete" class="btn btn-danger">Delete All</button>
 
 
 
@@ -63,10 +64,14 @@
                     }
                     
                     postMessage(message)
-                })
-            
+            })
 
             getMessages()
+
+            $('#delete').click( () => {
+                // console.log('you clicked on delete')
+                deleteAll()
+            })
         })
 
         // listens for new messages and passes them to addMessages
@@ -83,6 +88,7 @@
         }
 
         function getMessages() {
+            console.log('called')
             $.get('http://localhost:3000/messages', (data) => {
                 // data.forEach(element => {
                 //     addMessages(element)
@@ -105,6 +111,16 @@
             console.log('the message is ', testData)
 
             $.post('http://localhost:3000/messages', message)
+        }
+
+        function deleteAll() {
+            $.post('http://localhost:3000/delete', (res) => {
+                if(res === 'OK') {
+                    console.log('get messages')
+                    // remove all child elements
+                    $('#messages').empty()
+                }
+            })
         }
     
     </script> 

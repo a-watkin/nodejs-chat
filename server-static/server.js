@@ -75,7 +75,7 @@ app.get('/messages', (req, res) => {
 
 app.post('/messages', async (req, res) => {
 	try {
-		throw 'error'
+		// throw 'error'
 		// throw 'some error'
 
 		// new database object, req.body contains the same structure
@@ -99,13 +99,29 @@ app.post('/messages', async (req, res) => {
 		return console.error(error)
 	} finally {
 		// call logger maybe, or close recourse
-		console.log('hello from finally')
+		// console.log('hello from finally')
 	}
+})
+
+app.post('/delete', (req, res) => {
+	// console.log('test')
+
+	Message.remove({}, (err) => {
+		if(err) {
+			// console.log(err)
+			res.sendStatus(500)
+		} else {
+			// console.log('it worked?')
+			res.sendStatus(200)
+			// io.emit()
+		}
+	})
+
 })
 
 // logs a message anytime a client connects
 io.on('connection', (socket) => {
-    console.log('a user connected')
+	console.log('a user connected')
 })
 
 var server = http.listen(3000, () => {
