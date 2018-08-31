@@ -11,9 +11,12 @@ const db = ({
 
 var app = express()
 
-
 // for mongodb
 var mongoose = require('mongoose')
+
+// tell mongoose to use default es6 promise library
+mongoose.Promise = Promise
+
 
 // make database connection
 var dbUrl = `mongodb://${db.username}:${db.password}@ds139722.mlab.com:39722/bobbytables`
@@ -75,11 +78,9 @@ app.post('/messages', (req, res) => {
 	// new database object, req.body contains the same structure
 	var message = new Message(req.body)
 
-	message.save((err) => {
-		if(err) {
-			sendStatus(500)
+	// uses a promise
+	message.save().then(() => {
 
-		}
 
 		// Nested callback example - difficult to understand due to nesting
 		Message.findOne({message: 'badword'}, (err, censored) => {
@@ -97,6 +98,11 @@ app.post('/messages', (req, res) => {
 
 	    io.emit('message', req.body)
 	    res.sendStatus(200)
+
+	// callback to handle errors
+	}).catch((err) => {
+		res.sendStatus(500)
+		return console.log(err)
 	})
 })
 
