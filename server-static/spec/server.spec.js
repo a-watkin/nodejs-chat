@@ -12,9 +12,21 @@ describe('get messages', () => {
     it('should return 200 OK', (done) => {
         
         request.get('http://localhost:3000/messages', (err, res) => {
-            console.log(res.body)
-            // expect(res.statusCode === '200')
-            // console.log('where is the response', res)
+            // console.log(res.body)
+            expect(res.statusCode).toEqual(200)
+            // you must also specify done here when the code finishes
+            done()
+        })
+    })
+
+    it('return a list that is not empty', (done) => {
+        
+        request.get('http://localhost:3000/messages', (err, res) => {
+            // this is actually testing the length of the return string
+            // not how many items are in the array, unless you parse it to JSON
+            expect(JSON.parse(res.body).length).toBeGreaterThan(0)
+            // you must also specify done here when the code finishes
+            done()
         })
     })
 })
