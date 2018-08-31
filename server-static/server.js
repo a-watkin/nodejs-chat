@@ -1,19 +1,22 @@
 var express = require('express')
 var bodyParser = require('body-parser')
+
+// for environment variables from .env file
 require('dotenv').config()
+
+const db = ({
+    username: process.env.DB_USER,
+    password: process.env.DB_PASS
+})
 
 var app = express()
 
 
-
-const db = ({
-    user: process.env.DB_USERNAME,
-    password: process.DB_PASSWORD
-})
-
-console.log(db.user)
-
+// for mongodb
 var mongoose = require('mongoose')
+
+// make database connection
+var dbUrl = `mongodb://${db.username}:${db.password}@ds139722.mlab.com:39722/bobbytables`
 
 // uses the node.js http server module passing in the express app
 // make sure that it is with an uppercase S
@@ -40,8 +43,20 @@ app.use(bodyParser.urlencoded({extended: false}))
 // because it is literally every other save that causes a crash
 
 
+// removed because it's also deprechiated, but without some second argument
+// there's a warning message 
+// second argument
+// useMongoClient: true
+mongoose.connect(dbUrl, {}, (err) => {
+    console.log('mongo db conncetions', err)
+})
 
-var dbUrl = "mongodb://@ds247479.mlab.com:47479/bobbytables"
+
+var Message = mongoose.model('Message', {
+	name: String,
+	message: String
+})
+
 
 var messages = [
     {
@@ -61,14 +76,27 @@ app.get('/messages', (req, res) => {
 })
 
 app.post('/messages', (req, res) => {
-    // res.send(messages)
-    // req.body is empty here from the front end but ok from postman
-    console.log('req.body', req.body.name)
+	// new database object, req.body contains the same structure
+	var message = new Message(req.body)
 
-    // recieves message from postman, pushes message onto messages array, which jquery gets on the front end
-    messages.push(req.body)
-    io.emit('message', req.body)
-    res.sendStatus(200)
+	message.save((err) => {
+		if(err) {
+			sendStatus(500)
+
+		}
+
+		// res.send(messages)
+	    // req.body is empty here from the front end but ok from postman
+	    console.log('req.body', req.body.name)
+
+	    // recieves message from postman, pushes message onto messages array, which jquery gets on the front end
+	    messages.push(req.body)
+	    io.emit('message', req.body)
+	    res.sendStatus(200)
+
+	})
+
+
 })
 
 // logs a message anytime a client connects
