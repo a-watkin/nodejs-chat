@@ -17,7 +17,6 @@ var mongoose = require('mongoose')
 // tell mongoose to use default es6 promise library
 mongoose.Promise = Promise
 
-
 // make database connection
 var dbUrl = `mongodb://${db.username}:${db.password}@ds139722.mlab.com:39722/bobbytables`
 
@@ -54,12 +53,10 @@ mongoose.connect(dbUrl, {}, (err) => {
     console.log('mongo db conncetions', err)
 })
 
-
 var Message = mongoose.model('Message', {
 	name: String,
 	message: String
 })
-
 
 // url, request, response
 app.get('/messages', (req, res) => {
@@ -75,25 +72,37 @@ app.get('/messages', (req, res) => {
 })
 
 app.post('/messages', async (req, res) => {
-	// new database object, req.body contains the same structure
-	var message = new Message(req.body)
 
-	// uses a promise
-	var savedMessage = await message.save()
+	try {
+		// throw 'some error'
 
-	var censored = await Message.findOne({message: 'badword'})
+		// new database object, req.body contains the same structure
+		var message = new Message(req.body)
 
-	if ( censored ) {
-		console.log('censored words found', censored)
-		await Message.remove({_id: censored.id})
-	} else {
-		io.emit('message', req.body)
-		
+		// uses a promise
+		var savedMessage = await message.save()
+		// returns the record from the database
+		var censored = await Message.findOne({message: 'badword'})
+
+		if ( censored ) {
+			console.log('censored words found', censored)
+			await Message.remove({_id: censored.id})
+		} else {
+			io.emit('message', req.body)
+		}
+		res.sendStatus(200)
+
+	} catch (error) {
+		res.sendStatus(500)
+		return console.error(error)
+	} finally {
+		// call logger maybe, or close recourse
+		console.log('hello from finally')
 	}
-	res.sendStatus(200)
+
+
 
 })
-
 
 // logs a message anytime a client connects
 io.on('connection', (socket) => {
@@ -103,4 +112,3 @@ io.on('connection', (socket) => {
 var server = http.listen(3000, () => {
     console.log('server is listening on port', server.address().port)
 })
-
