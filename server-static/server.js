@@ -9,6 +9,8 @@ const db = ({
     password: process.env.DB_PASS
 })
 
+console.log(db)
+
 var app = express()
 
 // for mongodb
@@ -72,8 +74,8 @@ app.get('/messages', (req, res) => {
 })
 
 app.post('/messages', async (req, res) => {
-
 	try {
+		throw 'error'
 		// throw 'some error'
 
 		// new database object, req.body contains the same structure
@@ -99,9 +101,6 @@ app.post('/messages', async (req, res) => {
 		// call logger maybe, or close recourse
 		console.log('hello from finally')
 	}
-
-
-
 })
 
 // logs a message anytime a client connects
