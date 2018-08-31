@@ -9,7 +9,7 @@ const db = ({
     password: process.env.DB_PASS
 })
 
-console.log(db)
+// console.log(db)
 
 var app = express()
 
@@ -70,8 +70,18 @@ app.get('/messages', (req, res) => {
 		}
 		res.send(messages)
 	})
-    
 })
+
+app.get('/messages/:user', (req, res) => {
+	Message.find({}, (err, messages) => {
+		if(err) {
+			console.log(err)
+		}
+		console.log('sending messages ')
+		res.send(messages)
+	})
+})
+
 
 app.post('/messages', async (req, res) => {
 	try {
