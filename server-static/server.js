@@ -80,31 +80,25 @@ app.post('/messages', (req, res) => {
 
 	// uses a promise
 	message.save().then(() => {
-
-
-		// Nested callback example - difficult to understand due to nesting
-		Message.findOne({message: 'badword'}, (err, censored) => {
-			if(censored) {
-				console.log('censored words found', censored)
-				Message.remove({_id: censored.id}, (err) => {
-					console.log('Removed censored message')
-				})
-			}
-		})
-
-		// res.send(messages)
-	    // req.body is empty here from the front end but ok from postman
-	    console.log('req.body', req.body.name)
-
-	    io.emit('message', req.body)
-	    res.sendStatus(200)
-
-	// callback to handle errors
-	}).catch((err) => {
+		console.log('saved')
+		// the return value is passed onto then()
+		return Message.findOne({message: 'badword'})
+	})
+	.then( censored => {
+		if ( censored ) {
+			console.log('censored words found', censored)
+			Message.remove({_id: censored.id})
+			console.log('removed censored message')
+		}
+		io.emit('message', req.body)
+		res.sendStatus(200)
+	})
+	.catch((err) => {
 		res.sendStatus(500)
 		return console.log(err)
 	})
 })
+
 
 // logs a message anytime a client connects
 io.on('connection', (socket) => {
