@@ -80,6 +80,17 @@ app.post('/messages', (req, res) => {
 			sendStatus(500)
 
 		}
+
+		// Nested callback example - difficult to understand due to nesting
+		Message.findOne({message: 'badword'}, (err, censored) => {
+			if(censored) {
+				console.log('censored words found', censored)
+				Message.remove({_id: censored.id}, (err) => {
+					console.log('Removed censored message')
+				})
+			}
+		})
+
 		// res.send(messages)
 	    // req.body is empty here from the front end but ok from postman
 	    console.log('req.body', req.body.name)
