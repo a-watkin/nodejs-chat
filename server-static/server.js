@@ -74,29 +74,24 @@ app.get('/messages', (req, res) => {
     
 })
 
-app.post('/messages', (req, res) => {
+app.post('/messages', async (req, res) => {
 	// new database object, req.body contains the same structure
 	var message = new Message(req.body)
 
 	// uses a promise
-	message.save().then(() => {
-		console.log('saved')
-		// the return value is passed onto then()
-		return Message.findOne({message: 'badword'})
-	})
-	.then( censored => {
-		if ( censored ) {
-			console.log('censored words found', censored)
-			return Message.remove({_id: censored.id})
-		}
-		// this code will not be reached if a censored word is found
+	var savedMessage = await message.save()
+
+	var censored = await Message.findOne({message: 'badword'})
+
+	if ( censored ) {
+		console.log('censored words found', censored)
+		await Message.remove({_id: censored.id})
+	} else {
 		io.emit('message', req.body)
-		res.sendStatus(200)
-	})
-	.catch((err) => {
-		res.sendStatus(500)
-		return console.log(err)
-	})
+		
+	}
+	res.sendStatus(200)
+
 })
 
 
