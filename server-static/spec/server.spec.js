@@ -37,7 +37,6 @@ describe('get messages form user', () => {
         request.get('http://localhost:3000/messages/tim', (err, res) => {
             // console.log(res.body)
             expect(res.statusCode).toEqual(200)
-            // console.log('WTF')
             // you must also specify done here when the code finishes
             done()
         })
