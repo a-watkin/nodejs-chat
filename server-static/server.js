@@ -58,21 +58,17 @@ var Message = mongoose.model('Message', {
 })
 
 
-var messages = [
-    {
-        name: 'Bart',
-        message: 'eat my shorts'
-    },
-
-    {
-        name: 'Homer',
-        message: 'doh'
-    }
-]
-
 // url, request, response
 app.get('/messages', (req, res) => {
-    res.send(messages)
+	// changed to get messages fromt he database
+	// and then send them to the frontend
+	Message.find({}, (err, messages) => {
+		if(err) {
+			console.log(err)
+		}
+		res.send(messages)
+	})
+    
 })
 
 app.post('/messages', (req, res) => {
@@ -84,19 +80,13 @@ app.post('/messages', (req, res) => {
 			sendStatus(500)
 
 		}
-
 		// res.send(messages)
 	    // req.body is empty here from the front end but ok from postman
 	    console.log('req.body', req.body.name)
 
-	    // recieves message from postman, pushes message onto messages array, which jquery gets on the front end
-	    messages.push(req.body)
 	    io.emit('message', req.body)
 	    res.sendStatus(200)
-
 	})
-
-
 })
 
 // logs a message anytime a client connects
