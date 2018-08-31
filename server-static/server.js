@@ -87,9 +87,9 @@ app.post('/messages', (req, res) => {
 	.then( censored => {
 		if ( censored ) {
 			console.log('censored words found', censored)
-			Message.remove({_id: censored.id})
-			console.log('removed censored message')
+			return Message.remove({_id: censored.id})
 		}
+		// this code will not be reached if a censored word is found
 		io.emit('message', req.body)
 		res.sendStatus(200)
 	})
