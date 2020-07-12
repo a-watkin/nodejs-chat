@@ -57,19 +57,29 @@
             console.log('ready')
             
             $('#send').click( () => {
-                
                     var message = {
                         "name": $("#name").val(),
                         "message": $("#message").val()
                     }
-                    
                     postMessage(message)
             })
 
+            $("#message").on('keypress', function (e) {
+                if (e.which == 13) {
+                    e.preventDefault();
+                    var message = {
+                        "name": $("#name").val(),
+                        "message": $("#message").val()
+                    }
+                    postMessage(message)
+                }
+            });
+
+            // Get messages from the server.
             getMessages()
 
+            // Delete all messages.
             $('#delete').click( () => {
-                // console.log('you clicked on delete')
                 deleteAll()
             })
         })
@@ -78,10 +88,14 @@
         // which puts them on the page
         // no paramater is supplied because message is the same as the callback
         socket.on('message', addMessages)
+        socket.on('delete-messages', deleteAllMessags)
+
+
+
 
         function addMessages(message) {
             // there was a problem here, it was targetting message instead of messages
-            $("#messages").append(
+            $("#messages").prepend(
                 `<h4> ${message.name} </h4>
                 <p>${message.message}</p>`
             )
@@ -99,28 +113,24 @@
             })
         }
 
+        // Send a post to server. Is this actually needed?
         function postMessage(message) {
-            // the JSON object message seems ok here
-            console.log('the message is ', message)
-
-            testData = {
-                "name": "test data",
-                "message": "this is a test"
-            }
-
-            console.log('the message is ', testData)
-
             $.post('http://localhost:3000/messages', message)
+            $('#message').val('')
         }
 
         function deleteAll() {
             $.post('http://localhost:3000/delete', (res) => {
                 if(res === 'OK') {
-                    console.log('get messages')
+                    console.log('Delete all messages.')
                     // remove all child elements
                     $('#messages').empty()
                 }
             })
+        }
+
+        function deleteAllMessags() {
+            $('#messages').empty()
         }
     
     </script> 
