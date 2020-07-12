@@ -19,8 +19,11 @@ var mongoose = require('mongoose')
 // tell mongoose to use default es6 promise library
 mongoose.Promise = Promise
 
+// TODO: replace this with a docker container
 // make database connection
-var dbUrl = `mongodb://${db.username}:${db.password}@ds139722.mlab.com:39722/bobbytables`
+// var dbUrl = `mongodb://${db.username}:${db.password}@ds139722.mlab.com:39722/bobbytables`
+
+var dbUrl = "mongodb://localhost:27017"
 
 // uses the node.js http server module passing in the express app
 // make sure that it is with an uppercase S
@@ -62,7 +65,7 @@ var Message = mongoose.model('Message', {
 
 // url, request, response
 app.get('/messages', (req, res) => {
-	// changed to get messages fromt he database
+	// changed to get messages from the database
 	// and then send them to the frontend
 	Message.find({}, (err, messages) => {
 		if(err) {
@@ -85,6 +88,7 @@ app.get('/messages/:user', (req, res) => {
 
 app.post('/messages', async (req, res) => {
 	try {
+		console.log('yo')
 		// throw 'error'
 		// throw 'some error'
 
