@@ -71,10 +71,12 @@ app.get('/messages', (req, res) => {
 		if(err) {
 			console.log(err)
 		}
+		console.log('messages ', messages)
 		res.send(messages)
 	})
 })
 
+// this doesn't really do anything?
 app.get('/messages/:user', (req, res) => {
 	Message.find({}, (err, messages) => {
 		if(err) {
@@ -97,15 +99,7 @@ app.post('/messages', async (req, res) => {
 
 		// uses a promise
 		var savedMessage = await message.save()
-		// returns the record from the database
-		var censored = await Message.findOne({message: 'badword'})
-
-		if ( censored ) {
-			console.log('censored words found', censored)
-			await Message.remove({_id: censored.id})
-		} else {
-			io.emit('message', req.body)
-		}
+		io.emit('message', req.body)
 		res.sendStatus(200)
 
 	} catch (error) {
@@ -126,8 +120,8 @@ app.post('/delete', (req, res) => {
 			res.sendStatus(500)
 		} else {
 			// console.log('it worked?')
+			io.emit('delete-messages')
 			res.sendStatus(200)
-			// io.emit()
 		}
 	})
 
