@@ -27,9 +27,6 @@
             <button id="send" class="btn btn-success">Send</button>
             <button id="delete" class="btn btn-danger">Delete All</button>
 
-
-
-
         </div>
 
         <div id="messages">
@@ -65,7 +62,7 @@
             })
 
             $("#message").on('keypress', function (e) {
-                if (e.which == 13) {
+                if (e.which == 13 && $('#message').val().length > 0) {
                     e.preventDefault();
                     var message = {
                         "name": $("#name").val(),
