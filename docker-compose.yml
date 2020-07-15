@@ -29,8 +29,9 @@ services:
     container_name: sample_db
     volumes:
       - ./db:/data/db
+    # this was suddenly requred for some reasons...
     ports:
-      - "27017"
+      - "27017:27017"
 #     networks:
 #       samplenet:
 #         aliases:
