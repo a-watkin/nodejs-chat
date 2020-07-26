@@ -45,6 +45,13 @@
     <script src="/socket.io/socket.io.js"></script>
 
     <script>
+        function sendMessage() {
+            var message = {
+                "name": $("#name").val(),
+                "message": $("#message").val()
+            }
+            postMessage(message);
+        }
 
         // intialises socket.io
         var socket = io()
@@ -54,21 +61,15 @@
             console.log('ready')
             
             $('#send').click( () => {
-                    var message = {
-                        "name": $("#name").val(),
-                        "message": $("#message").val()
-                    }
-                    postMessage(message)
-            })
+                if ($('#message').val().replace(/\s+/, "").length > 0) {
+                    sendMessage();
+                }
+            });
 
             $("#message").on('keypress', function (e) {
-                if (e.which == 13 && $('#message').val().length > 0) {
+                if (e.which == 13 && $('#message').val().replace(/\s+/, "").length > 0) {
                     e.preventDefault();
-                    var message = {
-                        "name": $("#name").val(),
-                        "message": $("#message").val()
-                    }
-                    postMessage(message)
+                    sendMessage();
                 }
             });
 
