@@ -1,6 +1,11 @@
 var express = require('express')
 var bodyParser = require('body-parser')
 
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+const myPlaintextPassword = 's0/\/\P4$$w0rD';
+const someOtherPlaintextPassword = 'not_bacon';
+
 // for environment variables from .env file
 require('dotenv').config()
 
@@ -12,9 +17,11 @@ const db = ({
 // console.log(db)
 
 var app = express()
+app.disable('x-powered-by')
 
 // for mongodb
-var mongoose = require('mongoose')
+const mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
 // tell mongoose to use default es6 promise library
 mongoose.Promise = Promise
@@ -45,15 +52,10 @@ app.use(bodyParser.json())
 // i guess urlencoded is needed
 app.use(bodyParser.urlencoded({extended: false}))
 
-// code is wroking now, but the app crashes every other save
-// i think this is due to nodemon and the port not being released fast enough
-// because it is literally every other save that causes a crash
+var session = require('express-session')
 
 
-// removed because it's also deprechiated, but without some second argument
-// there's a warning message 
-// second argument
-// useMongoClient: true
+// The empty object here is due to a deprechated method.
 mongoose.connect(dbUrl, {}, (err) => {
     console.log('mongo db conncetions', err)
 })
@@ -62,6 +64,48 @@ var Message = mongoose.model('Message', {
 	name: String,
 	message: String
 })
+
+// A schema mpas to a mongodb colelctions
+var userSchema = new Schema({
+  name: {
+    type: String,
+    unique: true,
+    required: true,
+    trim: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+});
+
+// The model.
+var User = mongoose.model('User', userSchema);
+
+// This is a problem because I define it everytime the app restarts and it's saving data.
+// var user = new User({name: "A", password: "test"})
+// var testSave = user.save()
+// console.log('wat ', testSave)
+
+// Write a functiont to insert users if they're not already there.
+let insertUsers = function() {
+	// query for the users
+	var result = User.findOne({name: 'J'});
+	console.log('result ', result)
+}
+
+// insertUsers()
+
+
+const users = {
+	"A": "$pbkdf2-sha512$25000$5LyXkpLyvte6V4oxxjhn7A$A.qsFPYjIESoubZ0.QOlRLKrBnQF91zeXPswUpRmyvEXjh1cS5RKicN5skfDMEdDFGmsDRq1NgGN9biXxcLTTg"
+}
+
+bcrypt.compare("", users['A'], function (err, result) {
+	// result == true
+	console.log('result ', result)
+});
+
 
 // url, request, response
 app.get('/messages', (req, res) => {
@@ -87,17 +131,19 @@ app.get('/messages/:user', (req, res) => {
 	})
 })
 
+// app.get('login', (req, res) => {
+
+// })
+
 
 app.post('/messages', async (req, res) => {
 	try {
-		console.log('yo')
-		// throw 'error'
-		// throw 'some error'
-
 		// new database object, req.body contains the same structure
+		// req.body is: [Object: null prototype] { name: 'A', message: 'test' }
 		var message = new Message(req.body)
 
-		// uses a promise
+		// Saves the message in the db using a promise.
+		// The variable savedMessage isn't used.
 		var savedMessage = await message.save()
 		io.emit('message', req.body)
 		res.sendStatus(200)
